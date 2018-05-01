@@ -29,7 +29,7 @@ public class DaoTest {
 //		enterpriseDao.deleteEnterpriseById(2);
 //		enterpriseDao.updateEnterpriseDescriptionById("阿里牛逼", 1);
 		//insert对象
-		Enterprise enterprise = new Enterprise(2, "腾讯", "深圳", "牛逼");
-		enterpriseDao.insertEnterprise(enterprise);
+//		Enterprise enterprise = new Enterprise(2, "腾讯", "深圳", "牛逼");
+//		enterpriseDao.insertEnterprise(enterprise);
 	}
 }
