@@ -22,6 +22,7 @@ import org.fathat.exception.InsertException;
 import org.fathat.exception.UnsupportReturnType;
 import org.fathat.exception.returnTypeMismatchedException;
 import org.fathat.pool.ConnectionPool;
+import org.fathat.util.ConnectionUtil;
 
 import com.mysql.jdbc.Connection;
 
@@ -53,7 +54,8 @@ public class DaoProxy implements InvocationHandler {
 	private Integer handleUpdate(String sql, Method method, Object[] args)
 			throws SQLException, InsertException {
 		// 以后从pool获取
-		Connection connection = ConnectionPool.getConnection();
+		//Connection connection = ConnectionPool.getConnection();
+		Connection connection = (Connection) ConnectionUtil.getConnection();
 		// 普通insert是指直接插入对应的VALUE(?,?,?) 带#号开头的是插入对象的情况
 		/** 约定#insert是插入一个对象,而且对象的属性都是基本类型 */
 		if ("#insert".equalsIgnoreCase(sql.split("\\s+")[0])) {
@@ -167,7 +169,7 @@ public class DaoProxy implements InvocationHandler {
 	// 根据表明获取相应列的名称
 	private String[] getColumnNames(String tableName) {
 		String[] columnNames = null;
-		Connection conn = ConnectionPool.getConnection();
+		Connection conn = (Connection) ConnectionUtil.getConnection();
 		String sql = "select * from " + tableName + " limit 1";
 		PreparedStatement stmt;
 		try {
@@ -188,7 +190,7 @@ public class DaoProxy implements InvocationHandler {
 	private Object handleSelect(String sql, Method method, Object[] args)
 			throws Exception {
 		// 以后从pool获取
-		Connection connection = ConnectionPool.getConnection();
+		Connection connection = (Connection) ConnectionUtil.getConnection();
 		PreparedStatement prepareStatement = connection.prepareStatement(sql);
 		// 约定sql开头不能有空格
 		setParam(prepareStatement, method, args);
@@ -237,7 +239,8 @@ public class DaoProxy implements InvocationHandler {
 		}
 		rs.close();
 		prepareStatement.close();
-		ConnectionPool.returnConnection(connection);
+		//ConnectionPool.returnConnection(connection);
+		ConnectionUtil.returnConnection(connection);
 		if (list != null)
 			return list;
 		return instance;

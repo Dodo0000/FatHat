@@ -18,7 +18,7 @@ public class ConnectioniTest {
 
 	@Test
 	public void test(){
-		Connection connection = ConnectionUtil.getConnection(new DataSource("db.properties"));
+		Connection connection = (Connection) ConnectionUtil.getConnection();
 		PreparedStatement prepareStatement = null;
 		try {
 			 prepareStatement = connection.prepareStatement("select * from enterprise where id > ?");
@@ -41,7 +41,7 @@ public class ConnectioniTest {
 			 }
 			 resultSet.close();
 			 prepareStatement.close();
-			 ConnectionUtil.release(connection);
+			 ConnectionUtil.returnConnection(connection);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
