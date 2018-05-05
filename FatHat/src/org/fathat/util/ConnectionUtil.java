@@ -1,42 +1,16 @@
 package org.fathat.util;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import org.fathat.pool.ConnectionPoolManager;
 
+/**
+ * @author wyhong
+ * @date 2018-4-28
+ */
 public class ConnectionUtil {
-	/**以后可以建立一个map<dbName, connManager>
-	 * 以此操作不同数据库的连接池
-	 * 有需要只要操作这个ConnectionUtil即可
-	 * */
-	private static ConnectionPoolManager connManager = new ConnectionPoolManager("db.properties");
-	
-	public static Connection getConnection(){
-		return connManager.getConnection();
-	}
-	
-	public static void returnConnection(Connection conn){
-		connManager.returnConnection(conn);
-	}
-}
 
-
-//package org.fathat.util;
-//
-//import java.sql.DriverManager;
-//import java.sql.SQLException;
-//
-//import org.fathat.datasource.DataSource;
-//
-//import com.mysql.jdbc.Connection;
-//import com.mysql.jdbc.ConnectionFeatureNotAvailableException;
-//
-///**
-// * @author wyhong
-// * @date 2018-4-28
-// */
-//public class ConnectionUtil {
-//
 //	public static Connection getConnection(DataSource datasource) {
 //		try {
 //			Class.forName(datasource.getDriverClassName());
@@ -54,12 +28,21 @@ public class ConnectionUtil {
 //		}
 //		return connection;
 //	}
-//	
-//	public static void release(Connection connection){
-//		try {
-//			connection.close();
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
-//	}
-//}
+private static ConnectionPoolManager connManager = new ConnectionPoolManager("db.properties");
+	
+	public static Connection getConnection(){
+		return connManager.getConnection();
+	}
+	
+	public static void returnConnection(Connection conn){
+		connManager.returnConnection(conn);
+	}
+	
+	public static void release(Connection connection){
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+}

@@ -2,10 +2,13 @@ package org.fathat.util;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 
 /**
@@ -82,6 +85,25 @@ public class ClassUtil {
 			}
 		}
 		return classList;
+	}
+	
+	public static boolean isBasicType(Class returnType) {
+		return Short.class == returnType || Integer.class == returnType ||
+				Float.class == returnType || Double.class == returnType || 
+				Long.class == returnType || Character.class ==returnType || 
+				String.class == returnType || Boolean.class == returnType ||
+				Date.class == returnType;
+	}
+	
+	public static void fillSetters(Map<String, Method> setters, Method[] methods) {
+		//获取所有setter
+		for (Method _method : methods) {
+			String methodName = _method.getName();
+			if(!methodName.startsWith("set")) continue;
+			String fieldName = methodName.substring(3);
+			fieldName = (char)((int)fieldName.charAt(0) + 32) + fieldName.substring(1);
+			setters.put(fieldName, _method);
+		}
 	}
 }
 

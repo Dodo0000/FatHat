@@ -1,6 +1,8 @@
 package org.fathat.test;
 
 import java.sql.PreparedStatement;
+
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -8,7 +10,6 @@ import org.fathat.datasource.DataSource;
 import org.fathat.util.ConnectionUtil;
 import org.junit.Test;
 
-import com.mysql.jdbc.Connection;
 
 /**
  * @author wyhong
@@ -18,7 +19,7 @@ public class ConnectioniTest {
 
 	@Test
 	public void test(){
-		Connection connection = (Connection) ConnectionUtil.getConnection();
+		Connection connection = ConnectionUtil.getConnection();
 		PreparedStatement prepareStatement = null;
 		try {
 			 prepareStatement = connection.prepareStatement("select * from enterprise where id > ?");
@@ -41,7 +42,7 @@ public class ConnectioniTest {
 			 }
 			 resultSet.close();
 			 prepareStatement.close();
-			 ConnectionUtil.returnConnection(connection);
+			 ConnectionUtil.release(connection);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

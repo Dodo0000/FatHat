@@ -11,6 +11,7 @@ import java.util.Properties;
 import java.util.Vector;  
 
 import org.fathat.datasource.DataSource;
+import org.fathat.util.LoggerUtil;
 import org.fathat.util.PropertiesUtil;
   
 public class ConnectionPool {  
@@ -140,7 +141,7 @@ public class ConnectionPool {
         //创建繁忙队列
         busyConnections = new Vector<Connection>();
         // 根据 initialConnections 中设置的值，创建连接。  
-        createConnections(this.initialConnections);  
+        createConnections(this.initialConnections);
     }  
   
     /** 
@@ -162,14 +163,17 @@ public class ConnectionPool {
             try { 
                 //向空闲队列中增加
                 freeConnections.add(newConnection());
-            } catch (SQLException e) {  
-                System.out.println(" 创建数据库连接失败！ " + e.getMessage());  
+            } catch (SQLException e) {
+            	/**输出构建失败信息*/
+            	LoggerUtil.getLogger().debug("Failed to build ConnectionPool" + e.getMessage());  
                 throw new SQLException();  
             }  
             // System.out.println(" 数据库连接己创建 ......");  
         }
         //标志成功创建
         this.isCreated = true;
+        /**输出成功构建线程池*/
+        LoggerUtil.getLogger().debug("ConnectionPool has been created successfully.");
     }  
     /** 
      * 创建一个新的数据库连接并返回它 
@@ -194,7 +198,7 @@ public class ConnectionPool {
                     && this.maxConnections > driverMaxConnections) {  
                 this.maxConnections = driverMaxConnections;  
             }  
-        }  
+        }
         return conn; 
     }  
   
@@ -212,13 +216,16 @@ public class ConnectionPool {
         Connection conn = getFreeConnection();   
         // 如果目前没有可以使用的连接，即所有的连接都在使用中  
         while (conn == null) {  
-            // 等一会再试  
-            // System.out.println("Wait");  
+            // 等一会再试 
+        	/**输出等待0.25sec 获取一个共享连接*/
+        	//LoggerUtil.getLogger().debug("Trying to get free connection 0.25 sec later!");  
             wait(250);  
             conn = getFreeConnection(); // 重新再试，直到获得可用的连接，如果  
             // getFreeConnection() 返回的为 null  
             // 则表明创建一批连接后也不可获得可用连接  
-        }  
+        }
+        /**成功获得一个连接*/
+        LoggerUtil.getLogger().debug("Get a free connection successfully.");
         return conn;// 返回获得的可用的连接  
     }  
   
@@ -321,7 +328,9 @@ public class ConnectionPool {
             freeConnections.add(conn);  
             busyConnections.remove(conn);  
             numOfBusyConnection--;
-        }  
+        }
+    	/**归还连接成功*/
+        LoggerUtil.getLogger().debug("Return a connection successfully.");
     }  
   
     /** 
@@ -340,7 +349,7 @@ public class ConnectionPool {
     public synchronized void closeConnectionPool() throws SQLException {  
         // 确保连接池存在，如果不存在，返回   
     	if(!isCreated){
-          System.out.println(" 连接池不存在，无法关闭 !");  
+          //System.out.println(" 连接池不存在，无法关闭 !");  
           return;
     	}
     	for(int i=0; i<freeConnections.size(); i++){
@@ -357,6 +366,8 @@ public class ConnectionPool {
     	numOfBusyConnection = 0;
     	//标志为没创建
     	isCreated = false;
+    	/**销毁连接池*/
+        LoggerUtil.getLogger().debug("Destory ConnectionPool successfully.");
     }  
   
     /** 
@@ -369,7 +380,8 @@ public class ConnectionPool {
         try {  
             conn.close();  
         } catch (SQLException e) {  
-            System.out.println(" 关闭数据库连接出错： " + e.getMessage());  
+        	/**销毁连接池*/
+            LoggerUtil.getLogger().debug("Fail to close a connection :\n"+e.getMessage()); 
         }  
     }  
     /** 

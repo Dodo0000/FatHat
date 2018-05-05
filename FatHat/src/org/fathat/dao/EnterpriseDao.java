@@ -43,5 +43,7 @@ public interface EnterpriseDao {
 	@Sql("#INSERT INTO enterprise VALUES(?,?,?,?)")
 	Integer insertEnterprise(Enterprise enterprise);
 	
+	@Sql("@INSERT INTO enterprise")
+	Integer insertEnterpriseAutoInc(Enterprise enterprise);
 	
 }
